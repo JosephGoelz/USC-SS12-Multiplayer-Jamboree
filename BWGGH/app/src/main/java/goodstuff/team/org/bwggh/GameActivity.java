@@ -30,7 +30,7 @@ public class GameActivity extends Activity implements OnGestureListener  {
         LinearLayout layout = (LinearLayout)findViewById(R.id.background);
         if (random == expected || expected == 5 && random == 4) {
             Random rand = new Random();
-            expected = rand.nextInt((6-0)+1)+0;
+            expected = rand.nextInt((5-0)+1)+0;
             if (expected == 0) {
                 layout.setBackgroundResource(R.drawable.swipe_up);
             }
