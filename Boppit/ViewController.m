@@ -16,8 +16,10 @@
 @property int command;
 @property int score;
 @property int timer;
+@property int timerHouse;
 @property NSTimer * t;
 @property NSTimer * tGhost;
+@property NSTimer * tHouse;
 @property int level;
 @property int timerFinal;
 @property int ghostTimer;
@@ -62,7 +64,8 @@
     [self.view addGestureRecognizer:swipedown];
     
     _score = 0;
-    _ghostTimer = 5;
+    _ghostTimer = 3;
+    _timerHouse = 3;
     self.Tap.enabled = NO;
     _messageLabel.text = @"";
     self.TryAgainButton.enabled = NO;
@@ -137,6 +140,7 @@
     
     self.view.backgroundColor = [UIColor colorWithPatternImage:image];
     
+    _score = 0;
     self.Level1.enabled = YES;
     self.Level2.enabled = YES;
     self.Level3.enabled = YES;
@@ -159,6 +163,7 @@
     
     _timerFinal = 30;
     _timer = 30;
+    _score = 0;
     self.TryAgainButton.enabled = NO;
     self.TryAgainButton.hidden = YES;
     
@@ -328,10 +333,10 @@
 {
     UIGraphicsBeginImageContext(self.view.frame.size);
     [[UIImage imageNamed:@"1H.png"] drawInRect:self.view.bounds];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage *image2 = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image2];
     
     _tGhost = [NSTimer scheduledTimerWithTimeInterval:1.0f
                                                target:self
@@ -340,6 +345,7 @@
                                               repeats:YES];
     _ghostTimer = 5;
     //self.view.backgroundColor = [UIColor whiteColor];
+    _score = 0;
     self.Level1.hidden = YES;
     self.Level2.hidden = YES;
     self.Level3.hidden = YES;
@@ -359,10 +365,10 @@
 {
     UIGraphicsBeginImageContext(self.view.frame.size);
     [[UIImage imageNamed:@"2H.png"] drawInRect:self.view.bounds];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage *image2 = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image2];
     
     _tGhost = [NSTimer scheduledTimerWithTimeInterval:1.0f
                                                target:self
@@ -370,6 +376,7 @@
                                              userInfo:nil
                                               repeats:YES];
     _ghostTimer = 5;
+    _score = 0;
     _timer = _timerFinal = 40;
     _level = 2;
     //_ghostTimer = 5;
@@ -387,12 +394,13 @@
 
 -(IBAction)playThreeButtonPushed:(id)sender
 {
+
     UIGraphicsBeginImageContext(self.view.frame.size);
     [[UIImage imageNamed:@"3H.png"] drawInRect:self.view.bounds];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage *image2 = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image2];
     
     _tGhost = [NSTimer scheduledTimerWithTimeInterval:1.0f
                                                target:self
@@ -400,6 +408,7 @@
                                              userInfo:nil
                                               repeats:YES];
     _ghostTimer = 5;
+    _score = 0;
     _timer = _timerFinal = 20;
     _level = 3;
     //_ghostTimer = 5;
@@ -564,7 +573,7 @@
             }
             else{
                 UIGraphicsBeginImageContext(self.view.frame.size);
-                [[UIImage imageNamed:@"TapScreen.png"] drawInRect:self.view.bounds];
+                [[UIImage imageNamed:@"handit.png"] drawInRect:self.view.bounds];
                 UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
                 UIGraphicsEndImageContext();
                 
