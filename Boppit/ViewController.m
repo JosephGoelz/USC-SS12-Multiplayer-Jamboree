@@ -86,11 +86,6 @@
     self.learnButton.hidden = NO;
     self.learnButton.enabled = YES;
     self.timer = self.timerFinal = 30;
-    self.t = [NSTimer scheduledTimerWithTimeInterval:1.0f
-                                                          target:self
-                                                        selector:@selector(subtractTime)
-                                                        userInfo:nil
-                                                         repeats:YES];
 
     //self.BackButton.enabled = NO;
     //self.BackButton.hidden = YES;
@@ -111,6 +106,7 @@
     if (_command != 6)
     {
         [_t invalidate];
+        _t = nil;
         UIGraphicsBeginImageContext(self.view.frame.size);
         [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -155,14 +151,8 @@
 
 -(IBAction)tryAgainTouched:(id)sender
 {
-    _t = [NSTimer scheduledTimerWithTimeInterval:1.0f
-                                          target:self
-                                        selector:@selector(subtractTime)
-                                        userInfo:nil
-                                         repeats:YES];
     
-    _timerFinal = 30;
-    _timer = 30;
+    _timer = _timerFinal;
     _score = 0;
     self.TryAgainButton.enabled = NO;
     self.TryAgainButton.hidden = YES;
@@ -201,6 +191,7 @@
     if (_command != 1)
     {
         [_t invalidate];
+        _t = nil;
         UIGraphicsBeginImageContext(self.view.frame.size);
         [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -227,13 +218,14 @@
 
 - (void)subtractTime {
     // 1
+    printf("are we subing?");
     _timer--;
     _countdown.text = [NSString stringWithFormat:@"Time: %i",_timer];
     
     // 2
     if (_timer == 0) {
         [_t invalidate];
-        
+        _t = nil;
         UIGraphicsBeginImageContext(self.view.frame.size);
         [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -252,6 +244,7 @@
     if (_command != 0)
     {
         [_t invalidate];
+        _t = nil;
         UIGraphicsBeginImageContext(self.view.frame.size);
         [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -275,6 +268,7 @@
     if (_command != 3)
     {
         [_t invalidate];
+        _t = nil;
         UIGraphicsBeginImageContext(self.view.frame.size);
         [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -298,6 +292,7 @@
     if (_command != 2)
     {
         [_t invalidate];
+        _t = nil;
         UIGraphicsBeginImageContext(self.view.frame.size);
         [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -323,7 +318,7 @@
     // 2
     if (_ghostTimer == 0) {
         [_tGhost invalidate];
-        
+        _t = nil;
         [self playButtonPushed:self];
         
     }
@@ -346,6 +341,8 @@
     _ghostTimer = 5;
     //self.view.backgroundColor = [UIColor whiteColor];
     _score = 0;
+    _timer = _timerFinal = 60;
+    _level = 1;
     self.Level1.hidden = YES;
     self.Level2.hidden = YES;
     self.Level3.hidden = YES;
@@ -354,8 +351,11 @@
     self.Level2.enabled = NO;
     self.Level3.enabled = NO;
     self.Tap.enabled = YES;
-    _timer = _timerFinal = 60;
-    _level = 1;
+    _t = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                          target:self
+                                        selector:@selector(subtractTime)
+                                        userInfo:nil
+                                         repeats:YES];
     //_ghostTimer = 5;
 
     //[self startCountdownGhost: self ];
@@ -388,6 +388,11 @@
     self.Level2.enabled = NO;
     self.Level3.enabled = NO;
     self.Tap.enabled = YES;
+    _t = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                          target:self
+                                        selector:@selector(subtractTime)
+                                        userInfo:nil
+                                         repeats:YES];
 
 }
 
@@ -421,6 +426,12 @@
     self.Level2.enabled = NO;
     self.Level3.enabled = NO;
     self.Tap.enabled = YES;
+    
+    _t = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                          target:self
+                                        selector:@selector(subtractTime)
+                                        userInfo:nil
+                                         repeats:YES];
 
 }
 
@@ -432,6 +443,7 @@
     if (_command != 5)
     {
         [_t invalidate];
+        _t = nil;
         UIGraphicsBeginImageContext(self.view.frame.size);
         [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -469,6 +481,7 @@
     if(_score >25)
     {
         [_t invalidate];
+        _t = nil;
         _score = 0;
         if (_level == 1)
         {
@@ -597,7 +610,8 @@
 
 -(void)OneComplete: sender
 {
-    
+    [_t invalidate];
+    _t = nil;
     UIGraphicsBeginImageContext(self.view.frame.size);
     [[UIImage imageNamed:@"1H-R.png"] drawInRect:self.view.bounds];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -611,7 +625,8 @@
 
 -(void)TwoComplete: sender
 {
-    
+    [_t invalidate];
+    _t = nil;
     UIGraphicsBeginImageContext(self.view.frame.size);
     [[UIImage imageNamed:@"2H-R.png"] drawInRect:self.view.bounds];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -625,7 +640,8 @@
 
 -(void)ThreeComplete: sender
 {
-    
+    [_t invalidate];
+    _t = nil;
     UIGraphicsBeginImageContext(self.view.frame.size);
     [[UIImage imageNamed:@"3H-R.png"] drawInRect:self.view.bounds];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -644,6 +660,7 @@
         if (_command != 4)
         {
             [_t invalidate];
+            _t = nil;
             UIGraphicsBeginImageContext(self.view.frame.size);
             [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
             UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
