@@ -17,6 +17,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".LevelActivity">
+        </activity>
+        <activity android:name=".LevelCountActivity">
+        </activity>
+        <activity android:name=".LevelTwoActivity">
+        </activity>
+        <activity android:name=".LevelOneActivity">
+        </activity>
+        <activity android:name=".LevelThreeActivity">
+         </activity>
+        <activity android:name=".GameActivity">
 
         </activity>
     </application>

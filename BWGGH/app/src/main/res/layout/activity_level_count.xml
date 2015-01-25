@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/count_down"
+    android:clickable="false">
+
+    <TextView
+        android:layout_width="59dp"
+        android:layout_height="40dp"
+        android:id="@+id/timer"
+        android:textSize="25sp"
+        android:text = "3"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="90dp"
+        android:layout_gravity="right|top"
+        android:textColor="#fffffeeb"/>
+
+</FrameLayout>

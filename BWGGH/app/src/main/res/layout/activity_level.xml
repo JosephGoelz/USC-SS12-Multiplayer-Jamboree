@@ -10,7 +10,29 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_height="98dp"
-            android:id="@+id/button2"
+            android:id="@+id/level1button"
             android:layout_gravity="center_horizontal|top"
-            android:background="@android:color/transparent" />
-    </FrameLayout>
+            android:background="@android:color/transparent"
+            android:onClick="gotoLevelOne" />
+
+    <Button
+
+        android:onClick="gotoLevelTwo"
+        android:layout_width="100dp"
+        android:layout_height="155dp"
+        android:id = "@+id/level2button"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent" />
+
+    <Button
+        android:onClick="gotoLevelThree"
+        android:layout_width="175dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="25dp"
+        android:id="@+id/level3button"
+        android:layout_gravity="center_horizontal|bottom"
+        android:background="@android:color/transparent"/>
+
+
+</FrameLayout>
