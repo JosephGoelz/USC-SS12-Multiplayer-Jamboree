@@ -11,7 +11,8 @@
         android:layout_height="70dp"
         android:id="@+id/button"
         android:layout_gravity="center"
-        android:background="@android:color/transparent" />
+        android:background="@android:color/transparent"
+        android:onClick="gotoActivity"/>
 
 
 </FrameLayout>

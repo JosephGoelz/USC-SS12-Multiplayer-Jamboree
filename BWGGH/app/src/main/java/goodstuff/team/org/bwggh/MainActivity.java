@@ -1,11 +1,9 @@
 package goodstuff.team.org.bwggh;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
-import android.view.Menu;
-import android.view.MenuItem;
 
     public class MainActivity extends Activity {
 
@@ -15,5 +13,9 @@ import android.view.MenuItem;
             setContentView(R.layout.activity_main);
         }
 
+        public void gotoActivity(View v) {
+            Intent intent = new Intent(this, LevelActivity.class);
+            startActivity(intent);
+        }
 
     }
