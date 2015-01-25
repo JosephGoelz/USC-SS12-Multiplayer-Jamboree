@@ -16,6 +16,8 @@
 @property int command;
 @property int score;
 @property int timer;
+@property NSTimer * t;
+@property NSTimer * tGhost;
 @property int level;
 @property int timerFinal;
 @property int ghostTimer;
@@ -28,7 +30,12 @@
 @property (weak, nonatomic) IBOutlet UIButton * Level1;
 @property (weak, nonatomic) IBOutlet UIButton* Level2;
 @property (weak, nonatomic) IBOutlet UIButton * Level3;
+@property (weak, nonatomic) IBOutlet UIButton * learnButton;
+@property (weak, nonatomic) IBOutlet UIButton * PassButton;
+//@property (weak, nonatomic) IBOutlet UIButton * BackButton;
 @property (weak, nonatomic) IBOutlet UIButton * Tap;
+@property (weak, nonatomic) IBOutlet UIButton * TryAgainButton;
+@property (weak, nonatomic) IBOutlet UIButton * playGameButton;
 
 @end
 
@@ -56,17 +63,148 @@
     
     _score = 0;
     _ghostTimer = 5;
+    self.Tap.enabled = NO;
+    _messageLabel.text = @"";
+    self.TryAgainButton.enabled = NO;
+    
+    self.Level1.enabled = NO;
+    self.Level2.enabled = NO;
+    self.Level3.enabled = NO;
+    self.playGameButton.enabled = YES;
+    
+    self.PassButton.enabled = NO;
+    self.PassButton.hidden = YES;
+    self.Level1.hidden = YES;
+    self.Level2.hidden = YES;
+    self.Level3.hidden = YES;
+    self.TryAgainButton.hidden = YES;
     self.Tap.hidden = YES;
+    self.playGameButton.hidden = NO;
+    self.learnButton.hidden = NO;
+    self.learnButton.enabled = YES;
+    self.timer = self.timerFinal = 30;
+    self.t = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                                          target:self
+                                                        selector:@selector(subtractTime)
+                                                        userInfo:nil
+                                                         repeats:YES];
+
+    //self.BackButton.enabled = NO;
+    //self.BackButton.hidden = YES;
+    
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [[UIImage imageNamed:@"Title.png"] drawInRect:self.view.bounds];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    
+}
+
+-(IBAction)Pass:(id)sender
+{
+    self.PassButton.enabled = NO;
+    self.PassButton.hidden = YES;
+    if (_command != 6)
+    {
+        [_t invalidate];
+        UIGraphicsBeginImageContext(self.view.frame.size);
+        [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+        
+        self.TryAgainButton.hidden = NO;
+        self.TryAgainButton.enabled = YES;
+    }
+    else{
+        _score++;
+        NSString *intString = [NSString stringWithFormat:@"%d", _score];
+        self.scoreLabel.text = intString;
+        [self playButtonPushed:self];
+    }
+
+    
+}
+
+-(IBAction)playGame:(id)sender
+{
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [[UIImage imageNamed:@"ChooseLevel1.png"] drawInRect:self.view.bounds];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    
+    self.Level1.enabled = YES;
+    self.Level2.enabled = YES;
+    self.Level3.enabled = YES;
+    self.Level1.hidden = NO;
+    self.Level2.hidden = NO;
+    self.Level3.hidden = NO;
+    self.playGameButton.enabled = NO;
+    self.playGameButton.hidden = YES;
+    self.learnButton.hidden = YES;
+    self.learnButton.enabled = NO;
+}
+
+-(IBAction)tryAgainTouched:(id)sender
+{
+    _t = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                          target:self
+                                        selector:@selector(subtractTime)
+                                        userInfo:nil
+                                         repeats:YES];
+    
+    _timerFinal = 30;
+    _timer = 30;
+    self.TryAgainButton.enabled = NO;
+    self.TryAgainButton.hidden = YES;
+    
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [[UIImage imageNamed:@"ChooseLevel1.png"] drawInRect:self.view.bounds];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    
+    self.Level1.enabled = YES;
+    self.Level2.enabled = YES;
+    self.Level3.enabled = YES;
+    self.Level1.hidden = NO;
+    self.Level2.hidden = NO;
+    self.Level3.hidden = NO;
+}
+
+-(IBAction)learnButtonPressed:(id)sender
+{
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [[UIImage imageNamed:@"Learn.png"] drawInRect:self.view.bounds];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    
+    self.TryAgainButton.enabled = YES;
+    self.TryAgainButton.hidden = NO;
+
 }
 
 -(void)swipeleft:(UISwipeGestureRecognizer*)gestureRecognizer
 {
     if (_command != 1)
     {
-        self.messageLabel.text = @"You did not swipe L!";
-        _score--;
-        NSString *intString = [NSString stringWithFormat:@"%d", _score];
-        self.scoreLabel.text = intString;
+        [_t invalidate];
+        UIGraphicsBeginImageContext(self.view.frame.size);
+        [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+        
+        self.TryAgainButton.hidden = NO;
+        self.TryAgainButton.enabled = YES;
     }
     else{
         _score++;
@@ -82,14 +220,42 @@
     }
 }
 
+- (void)subtractTime {
+    // 1
+    _timer--;
+    _countdown.text = [NSString stringWithFormat:@"Time: %i",_timer];
+    
+    // 2
+    if (_timer == 0) {
+        [_t invalidate];
+        
+        UIGraphicsBeginImageContext(self.view.frame.size);
+        [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+        
+        self.TryAgainButton.hidden = NO;
+        self.TryAgainButton.enabled = YES;
+
+    }
+}
+
 -(void)swiperight:(UISwipeGestureRecognizer*)gestureRecognizer
 {
     if (_command != 0)
     {
-        self.messageLabel.text = @"You did not swipe R!";
-        _score--;
-        NSString *intString = [NSString stringWithFormat:@"%d", _score];
-        self.scoreLabel.text = intString;
+        [_t invalidate];
+        UIGraphicsBeginImageContext(self.view.frame.size);
+        [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+        
+        self.TryAgainButton.hidden = NO;
+        self.TryAgainButton.enabled = YES;
     }
     else{
         _score++;
@@ -103,10 +269,16 @@
 {
     if (_command != 3)
     {
-        self.messageLabel.text = @"You did not swipe D!";
-        _score--;
-        NSString *intString = [NSString stringWithFormat:@"%d", _score];
-        self.scoreLabel.text = intString;
+        [_t invalidate];
+        UIGraphicsBeginImageContext(self.view.frame.size);
+        [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+        
+        self.TryAgainButton.hidden = NO;
+        self.TryAgainButton.enabled = YES;
     }
     else{
         _score++;
@@ -120,10 +292,16 @@
 {
     if (_command != 2)
     {
-        self.messageLabel.text = @"You did not swipe U!";
-        _score--;
-        NSString *intString = [NSString stringWithFormat:@"%d", _score];
-        self.scoreLabel.text = intString;
+        [_t invalidate];
+        UIGraphicsBeginImageContext(self.view.frame.size);
+        [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+        
+        self.TryAgainButton.hidden = NO;
+        self.TryAgainButton.enabled = YES;
     }
     else{
         _score++;
@@ -133,143 +311,321 @@
     }
 }
 
+- (void)subtractTimeGhost {
+    // 1
+    _ghostTimer--;
+    
+    // 2
+    if (_ghostTimer == 0) {
+        [_tGhost invalidate];
+        
+        [self playButtonPushed:self];
+        
+    }
+}
+
 -(IBAction)playOneButtonPushed:(id)sender
 {
-    _timer = _timerFinal = 20;
-    _level = 1;
-    self.Level1.hidden = YES;
-    self.Level2.hidden = YES;
-    self.Level3.hidden = YES;
-    self.Tap.hidden = NO;
     UIGraphicsBeginImageContext(self.view.frame.size);
-    [[UIImage imageNamed:@"CountDown.png"] drawInRect:self.view.bounds];
+    [[UIImage imageNamed:@"1H.png"] drawInRect:self.view.bounds];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
     self.view.backgroundColor = [UIColor colorWithPatternImage:image];
-    [self startCountdownGhost: self ];
+    
+    _tGhost = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                               target:self
+                                             selector:@selector(subtractTimeGhost)
+                                             userInfo:nil
+                                              repeats:YES];
+    _ghostTimer = 5;
+    //self.view.backgroundColor = [UIColor whiteColor];
+    self.Level1.hidden = YES;
+    self.Level2.hidden = YES;
+    self.Level3.hidden = YES;
+    self.Tap.hidden = NO;
+    self.Level1.enabled = NO;
+    self.Level2.enabled = NO;
+    self.Level3.enabled = NO;
+    self.Tap.enabled = YES;
+    _timer = _timerFinal = 60;
+    _level = 1;
+    //_ghostTimer = 5;
+
+    //[self startCountdownGhost: self ];
 }
 
 -(IBAction)playTwoButtonPushed:(id)sender
 {
-
-    _timer = _timerFinal = 10;
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [[UIImage imageNamed:@"2H.png"] drawInRect:self.view.bounds];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    
+    _tGhost = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                               target:self
+                                             selector:@selector(subtractTimeGhost)
+                                             userInfo:nil
+                                              repeats:YES];
+    _ghostTimer = 5;
+    _timer = _timerFinal = 40;
     _level = 2;
+    //_ghostTimer = 5;
     self.Level1.hidden = YES;
     self.Level2.hidden = YES;
     self.Level3.hidden = YES;
         self.Tap.hidden = NO;
-    [self playButtonPushed:self];
+    self.Level1.enabled = NO;
+    self.Level2.enabled = NO;
+    self.Level3.enabled = NO;
+    self.Tap.enabled = YES;
+
 }
+
 
 -(IBAction)playThreeButtonPushed:(id)sender
 {
-    _timer = _timerFinal = 5;
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [[UIImage imageNamed:@"3H.png"] drawInRect:self.view.bounds];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    
+    _tGhost = [NSTimer scheduledTimerWithTimeInterval:1.0f
+                                               target:self
+                                             selector:@selector(subtractTimeGhost)
+                                             userInfo:nil
+                                              repeats:YES];
+    _ghostTimer = 5;
+    _timer = _timerFinal = 20;
     _level = 3;
+    //_ghostTimer = 5;
     self.Level1.hidden = YES;
     self.Level2.hidden = YES;
     self.Level3.hidden = YES;
         self.Tap.hidden = NO;
-    [self playButtonPushed:self];
+    self.Tap.hidden = NO;
+    self.Level1.enabled = NO;
+    self.Level2.enabled = NO;
+    self.Level3.enabled = NO;
+    self.Tap.enabled = YES;
+
 }
 
--(IBAction)playButtonPushed:(id)sender
+-(IBAction)Tapped:(id)sender
 {
-    _scoreLabel.text = @"Your score: ";
-    _timerTitle.text = @"Timer: ";
+    self.Tap.enabled = NO;
+    self.Tap.hidden = YES;
+    printf("in tap method");
+    if (_command != 5)
+    {
+        [_t invalidate];
+        UIGraphicsBeginImageContext(self.view.frame.size);
+        [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+        
+        self.TryAgainButton.hidden = NO;
+        self.TryAgainButton.enabled = YES;
+    }
+    else{
+        _score++;
+        NSString *intString = [NSString stringWithFormat:@"%d", _score];
+        self.scoreLabel.text = intString;
+        [self playButtonPushed:self];
+    }
+}
+
+-(void)playButtonPushed:(id)sender
+{
+    _scoreTitle.text = @"Your score: ";
+   // _timerTitle.text = @"Timer: ";
+    self.TryAgainButton.hidden = YES;
+    self.TryAgainButton.enabled = NO;
+    self.Level1.hidden = YES;
+    self.Level2.hidden = YES;
+    self.Level3.hidden = YES;
+    self.Level1.enabled = NO;
+    self.Level2.enabled = NO;
+    self.Level3.enabled = NO;
    // _rando = arc4random_uniform(6);
     //printf("This is a neat command!\n");
     [self.view setBackgroundColor:[UIColor redColor] ];
     //printf("After setting color");
-    while(true)
+    if(_score >25)
     {
-        _rando = arc4random_uniform(6);
-        //printf("in while loop");
-        if (_rando == 0)
+        [_t invalidate];
+        _score = 0;
+        if (_level == 1)
         {
-            
-            UIGraphicsBeginImageContext(self.view.frame.size);
-            [[UIImage imageNamed:@"SwipeRight.png"] drawInRect:self.view.bounds];
-            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            self.view.backgroundColor = [UIColor colorWithPatternImage:image];
-            
-            self.messageLabel.text = @"";
-            _command = 0;
-            [self startCountdown:self];
+            [self OneComplete: self];
         }
-        else if (_rando == 1)
+        else if (_level == 2)
         {
-            
-            UIGraphicsBeginImageContext(self.view.frame.size);
-            [[UIImage imageNamed:@"SwipeLeft.png"] drawInRect:self.view.bounds];
-            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            self.view.backgroundColor = [UIColor colorWithPatternImage:image];
-            
-            [self startCountdown:self];
-            self.messageLabel.text = @"";
-            _command = 1;
-        }
-        else if (_rando == 2)
-        {
-            
-            UIGraphicsBeginImageContext(self.view.frame.size);
-            [[UIImage imageNamed:@"SwipeUp.png"] drawInRect:self.view.bounds];
-            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            self.view.backgroundColor = [UIColor colorWithPatternImage:image];
-            
-            [self startCountdown:self];
-            self.messageLabel.text = @"";
-            _command = 2;
-        }
-        else if (_rando == 3)
-        {
-            
-            UIGraphicsBeginImageContext(self.view.frame.size);
-            [[UIImage imageNamed:@"SwipeDown.png"] drawInRect:self.view.bounds];
-            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            self.view.backgroundColor = [UIColor colorWithPatternImage:image];
-            
-            [self startCountdown:self];
-            self.messageLabel.text = @"";
-            _command = 3;
-        }
-        else if (_rando == 4)
-        {
-            UIGraphicsBeginImageContext(self.view.frame.size);
-            [[UIImage imageNamed:@"ShakeScreen.png"] drawInRect:self.view.bounds];
-            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            self.view.backgroundColor = [UIColor colorWithPatternImage:image];
-            
-            [self startCountdown:self];
-            self.messageLabel.text = @"";
-            _command = 4;
+            [self TwoComplete: self];
         }
         else{
-            UIGraphicsBeginImageContext(self.view.frame.size);
-            [[UIImage imageNamed:@"TapScreen.png"] drawInRect:self.view.bounds];
-            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            self.view.backgroundColor = [UIColor colorWithPatternImage:image];
-            
-            [self startCountdown:self];
-            self.messageLabel.text = @"";
-            _score++;
-            _command = 5;
+            [self ThreeComplete: self];
         }
-        break;
+    }
+    else
+    {
+        while(true)
+        {
+            _rando = arc4random_uniform(7);
+            //printf("in while loop");
+            if (_rando == 0)
+            {
+            
+                UIGraphicsBeginImageContext(self.view.frame.size);
+                [[UIImage imageNamed:@"SwipeRight.png"] drawInRect:self.view.bounds];
+                UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+            
+                self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+            
+                self.messageLabel.text = @"";
+                _command = 0;
+                //[self startCountdown:self];
+            }
+            else if (_rando == 1)
+            {
+            
+                UIGraphicsBeginImageContext(self.view.frame.size);
+                [[UIImage imageNamed:@"SwipeLeft.png"] drawInRect:self.view.bounds];
+                UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+            
+                self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+            
+                //[self startCountdown:self];
+                self.messageLabel.text = @"";
+                _command = 1;
+            }
+            else if (_rando == 2)
+            {
+            
+                UIGraphicsBeginImageContext(self.view.frame.size);
+                [[UIImage imageNamed:@"SwipeUp.png"] drawInRect:self.view.bounds];
+                UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+            
+                self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+            
+                //[self startCountdown:self];
+                self.messageLabel.text = @"";
+                _command = 2;
+            }
+            else if (_rando == 3)
+            {
+            
+                UIGraphicsBeginImageContext(self.view.frame.size);
+                [[UIImage imageNamed:@"SwipeDown.png"] drawInRect:self.view.bounds];
+                UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+            
+                self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+            
+                //[self startCountdown:self];
+                self.messageLabel.text = @"";
+                _command = 3;
+            }
+            else if (_rando == 4)
+            {
+                UIGraphicsBeginImageContext(self.view.frame.size);
+                [[UIImage imageNamed:@"ShakeScreen.png"] drawInRect:self.view.bounds];
+                UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+            
+                self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+            
+                //[self startCountdown:self];
+                self.messageLabel.text = @"";
+                _command = 4;
+            }
+            else if (_rando == 5){
+                UIGraphicsBeginImageContext(self.view.frame.size);
+                [[UIImage imageNamed:@"TapScreen.png"] drawInRect:self.view.bounds];
+                UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+            
+                self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+            
+                //[self startCountdown:self];
+                self.Tap.enabled = YES;
+                self.Tap.hidden = NO;
+                self.messageLabel.text = @"";
+                _command = 5;
+            }
+            else{
+                UIGraphicsBeginImageContext(self.view.frame.size);
+                [[UIImage imageNamed:@"TapScreen.png"] drawInRect:self.view.bounds];
+                UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+                
+                self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+                
+                //[self startCountdown:self];
+                self.Tap.enabled = NO;
+                self.Tap.hidden = YES;
+                self.PassButton.enabled = YES;
+                self.PassButton.hidden = NO;
+                self.messageLabel.text = @"";
+                _command = 6;
+
+            }
+            break;
+        }
+        
     }
     
+}
+
+-(void)OneComplete: sender
+{
+    
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [[UIImage imageNamed:@"1H-R.png"] drawInRect:self.view.bounds];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    
+    self.TryAgainButton.enabled = YES;
+    self.TryAgainButton.hidden = NO;
+}
+
+-(void)TwoComplete: sender
+{
+    
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [[UIImage imageNamed:@"2H-R.png"] drawInRect:self.view.bounds];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    
+    self.TryAgainButton.enabled = YES;
+    self.TryAgainButton.hidden = NO;
+}
+
+-(void)ThreeComplete: sender
+{
+    
+    UIGraphicsBeginImageContext(self.view.frame.size);
+    [[UIImage imageNamed:@"3H-R.png"] drawInRect:self.view.bounds];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+    
+    self.TryAgainButton.enabled = YES;
+    self.TryAgainButton.hidden = NO;
 }
 
 - (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
@@ -278,10 +634,16 @@
     {
         if (_command != 4)
         {
-            self.messageLabel.text = @"You did not shake!";
-            _score--;
-            NSString *intString = [NSString stringWithFormat:@"%d", _score];
-            self.scoreLabel.text = intString;
+            [_t invalidate];
+            UIGraphicsBeginImageContext(self.view.frame.size);
+            [[UIImage imageNamed:@"LosingScreen.png"] drawInRect:self.view.bounds];
+            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            self.view.backgroundColor = [UIColor colorWithPatternImage:image];
+            
+            self.TryAgainButton.hidden = NO;
+            self.TryAgainButton.enabled = YES;
         }
         else{
             _score++;
@@ -297,45 +659,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)startCountdown:(id)sender
-{
-    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(advanceTimer:) userInfo:nil repeats:NO];
-}
 
-- (void)advanceTimer:(NSTimer *)timer
-{
-    --_timer;
-    if(self.timer <= 0)
-    {
-        _timer = _timerFinal;
-        printf("Times Up");
-    }
-    else{
-        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(advanceTimer:) userInfo:nil repeats:NO];
-    }
-    NSString *intString = [NSString stringWithFormat:@"%d", _timer];
-    
-    _countdown.text = intString;
-}
 
-- (void)startCountdownGhost:(id)sender
-{
-    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(advanceTimerGhost:) userInfo:nil repeats:NO];
-}
-
-- (void)advanceTimerGhost:(NSTimer *)timer
-{
-    --_ghostTimer;
-    if(self.ghostTimer <= 0)
-    {
-        _ghostCountdown.text = @"";
-        [self playButtonPushed:self];
-    }
-    else{
-        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(advanceTimerGhost:) userInfo:nil repeats:NO];
-        NSString *intString = [NSString stringWithFormat:@"%d", _ghostTimer];
-        
-        _ghostCountdown.text = intString;
-    }
-}
 @end

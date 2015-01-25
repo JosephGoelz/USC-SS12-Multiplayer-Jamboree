@@ -13,7 +13,9 @@
 -(IBAction)playOneButtonPushed:(id)sender;
 -(IBAction)playTwoButtonPushed:(id)sender;
 -(IBAction)playThreeButtonPushed:(id)sender;
--(IBAction)playButtonPushed:(id)sender;
+-(IBAction)tryAgainTouched:(id)sender;
+-(IBAction)learnButtonPressed:(id)sender;
+-(IBAction)playGame:(id)sender;
 -(void)swiperight:(UISwipeGestureRecognizer*)gestureRecognizer;
 -(void)swipeleft:(UISwipeGestureRecognizer*)gestureRecognizer;
 -(void)swipedown:(UISwipeGestureRecognizer*)gestureRecognizer;
