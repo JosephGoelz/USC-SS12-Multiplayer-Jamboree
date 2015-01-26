@@ -1,22 +1,27 @@
 package goodstuff.team.org.bwggh;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.MotionEvent;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import java.util.Random;
+import java.util.logging.FileHandler;
 
 /**
- * Created by justine on 1/25/2015.
+ * Created by Justine Foote on 1/25/2015.
  */
 public class GameActivity extends Activity implements OnGestureListener  {
     private GestureDetector gDetector;
     private int expected;
+    private int points;
     /*
     swipe up = 0
      swipe left = 1
@@ -29,8 +34,9 @@ public class GameActivity extends Activity implements OnGestureListener  {
     private void isValid(int random){
         LinearLayout layout = (LinearLayout)findViewById(R.id.background);
         if (random == expected || expected == 5 && random == 4) {
+            points++;
             Random rand = new Random();
-            expected = rand.nextInt((5-0)+1)+0;
+            expected = rand.nextInt(6); // where the formula should be nextInt((5+0)+1)+0
             if (expected == 0) {
                 layout.setBackgroundResource(R.drawable.swipe_up);
             }
@@ -39,7 +45,6 @@ public class GameActivity extends Activity implements OnGestureListener  {
             }
             else if (expected == 2) {
                 layout.setBackgroundResource(R.drawable.swipe_right);
-
             }
             else if (expected == 3) {
                 layout.setBackgroundResource(R.drawable.swipe_down);
@@ -53,17 +58,31 @@ public class GameActivity extends Activity implements OnGestureListener  {
             else if (expected == 6) {
                 layout.setBackgroundResource(R.drawable.shake_screen);
             }
-            // possible log message
+            else {
+               System.out.println("expected actually was " + expected);
+            }
         }
         else {
+            System.out.println("expected actually was " + expected);
             layout.setBackgroundResource(R.drawable.losing_screen);
+            final Intent intent = new Intent(this, LevelActivity.class);
+            CountDownTimer count = new CountDownTimer(4000, 1000) {
+                @Override
+                public void onTick(long l) {
+                }
+
+                @Override
+                public void onFinish() {
+                    startActivity(intent);
+                }
+            }.start();
         }
     }
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        gDetector = new GestureDetector(this);
         expected = 0;
+        gDetector = new GestureDetector(this );
         LinearLayout layout = (LinearLayout)findViewById(R.id.background);
         layout.setBackgroundResource(R.drawable.swipe_up);
         // create a random screen here
@@ -110,14 +129,17 @@ public class GameActivity extends Activity implements OnGestureListener  {
             // then change the background
             isValid(0);
         }
-        else if (start.getRawX() < finish.getRawX()) {
-            isValid(2);
-        }
-        else {
-            isValid(1);
+        if (Math.abs(finish.getX()-start.getX())> Math.abs(finish.getY()-start.getY())) {
+            if ((finish.getX()-start.getX()) > 0) {
+                isValid(2);
+            }
+            else {
+                isValid(1);
+            }
         }
         return true;
     }
+
 
 
 }

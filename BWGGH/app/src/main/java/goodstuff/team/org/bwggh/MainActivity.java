@@ -13,8 +13,12 @@ import android.view.*;
             setContentView(R.layout.activity_main);
         }
 
-        public void gotoActivity(View v) {
+        public void gotoLevelActivity(View v) {
             Intent intent = new Intent(this, LevelActivity.class);
+            startActivity(intent);
+        }
+        public void gotoHowToActivity(View v) {
+            Intent intent = new Intent(this, HowToActivity.class);
             startActivity(intent);
         }
 

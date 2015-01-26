@@ -16,7 +16,7 @@ public class LevelTwoActivity extends Activity{
         startActivity(countDown);
         setContentView(R.layout.activity_level_two);
         final Intent intent = new Intent(this, GameActivity.class);
-        CountDownTimer count = new CountDownTimer(4000, 1000) {
+        CountDownTimer count = new CountDownTimer(8000, 1000) {
             @Override
             public void onTick(long l) {
             }
